@@ -42,6 +42,20 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # KiroOS app suite and the stock apps it replaces
 $(call inherit-product, packages/apps/KiroOS/kiroos_apps.mk)
 
+# LineageOS's FFmpeg codec plugins: external/ffmpeg has no x86_64 configuration, the emulator
+# plays media with the stock Android codecs
+PRODUCT_PACKAGES_REMOVE += \
+    libffmpeg_extractor \
+    libffmpeg_omx \
+    media_codecs_ffmpeg.xml
+
+# WebView: the tree only has the ARM prebuilts (roomservice.xml removes the x86 projects). Until
+# external/chromium-webview/prebuilt/x86_64/webview.apk is fetched (Git LFS, ~251 MB), the
+# emulator has no WebView and the apps that show web pages can't open them.
+ifeq ($(wildcard external/chromium-webview/prebuilt/x86_64/webview.apk),)
+PRODUCT_PACKAGES_REMOVE += webview
+endif
+
 PRODUCT_NAME := kiro_emu_x86_64
 PRODUCT_DEVICE := kiro_emu_x86_64
 PRODUCT_BRAND := KiroOS

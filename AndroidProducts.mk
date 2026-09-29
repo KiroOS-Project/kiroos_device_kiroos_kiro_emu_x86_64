@@ -1,6 +1,6 @@
 #
-# KiroOS on the Android emulator (x86_64), see kiro_emu_x86_64.mk
+# KiroOS on the Android emulator (x86_64), see kiro.mk
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/kiro_emu_x86_64.mk
+    $(LOCAL_DIR)/kiro.mk

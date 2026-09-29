@@ -37,6 +37,10 @@ PRODUCT_COPY_FILES += \
 # emulator without adb.
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=adb
+# adb over TCP too: the tree's 2016 emulator can't carry adb over its pipe with this kernel;
+# ~/kiro_emulator.sh redirects localhost:5557 to it (still key-authorized)
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    service.adb.tcp.port=5555
 ifneq ($(wildcard device/kiroos/kiro_emu_x86_64/adb_keys),)
 # adbd (N) trusts /adb_keys besides /data/misc/adb/adb_keys; this tree has no PRODUCT_ADB_KEYS
 PRODUCT_COPY_FILES += device/kiroos/kiro_emu_x86_64/adb_keys:root/adb_keys
@@ -65,6 +69,11 @@ PRODUCT_PACKAGES_REMOVE += \
 ifeq ($(wildcard external/chromium-webview/prebuilt/x86_64/webview.apk),)
 PRODUCT_PACKAGES_REMOVE += webview
 endif
+# The WebView's native helpers are public libraries (/system/etc/public.libraries.txt): without
+# them the linker namespace of system_server can't be created and it dies at start, WebView or not
+PRODUCT_PACKAGES += \
+    libwebviewchromium_loader \
+    libwebviewchromium_plat_support
 
 PRODUCT_NAME := kiro_emu_x86_64
 PRODUCT_DEVICE := kiro_emu_x86_64

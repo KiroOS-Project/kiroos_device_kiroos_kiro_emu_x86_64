@@ -32,6 +32,16 @@ KIROOS_KAI_FILES := \
 PRODUCT_COPY_FILES += \
     $(foreach f,$(KIROOS_KAI_FILES),$(if $(wildcard $(KIROOS_KAI)/$(f)),$(KIROOS_KAI)/$(f):system/usr/share/kai/$(f)))
 
+# adb on from boot, authorized for this PC's adb keys only (adb_keys: WSL and Windows adbkey.pub,
+# made by ~/kai/r8_adbkeys.sh, not in git). LineageOS defaults to usb.config none, which left the
+# emulator without adb.
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    persist.sys.usb.config=adb
+ifneq ($(wildcard device/kiroos/kiro_emu_x86_64/adb_keys),)
+# adbd (N) trusts /adb_keys besides /data/misc/adb/adb_keys; this tree has no PRODUCT_ADB_KEYS
+PRODUCT_COPY_FILES += device/kiroos/kiro_emu_x86_64/adb_keys:root/adb_keys
+endif
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.webview.provider=com.android.webview \
     ro.kiroos.model=Emulator \
